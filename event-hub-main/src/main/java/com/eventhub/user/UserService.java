@@ -1,20 +1,21 @@
 package com.eventhub.user;
 
+import com.eventhub.security.AuthenticatedUser;
 import com.eventhub.user.dto.UserDto;
-import com.eventhub.user.dto.UserLoginRequest;
 import com.eventhub.user.dto.UserRegisterRequest;
-import com.eventhub.user.exception.InvalidLoginException;
 import com.eventhub.user.exception.UserAlreadyExistsException;
 import com.eventhub.user.exception.UserNotFoundException;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserService
+public class UserService implements UserDetailsService
 {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -42,25 +43,26 @@ public class UserService
         return UserMapper.toUserDto(savedUser);
     }
 
-    public UserDto login(UserLoginRequest userLoginRequest)
-    {
-        Optional<User> optionalUser = userRepository.findByEmail(userLoginRequest.getEmail());
-
-        if(optionalUser.isEmpty() ||
-                !passwordEncoder.matches(userLoginRequest.getPassword(), optionalUser.get().getPassword())
-        )
-        {
-            throw new InvalidLoginException("Invalid email or password!");
-        }
-
-        return UserMapper.toUserDto(optionalUser.get());
-    }
-
     public UserDto getById(UUID id)
     {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return UserMapper.toUserDto(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException
+    {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password!"));
+
+        return AuthenticatedUser.builder()
+                .id(user.getId())
+                .displayName(user.getUsername())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .build();
     }
 }

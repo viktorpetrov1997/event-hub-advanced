@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,7 +20,7 @@
                 <h1>Upcoming events</h1>
                 <p>Find a workshop or event and reserve your seat.</p>
             </div>
-            <a th:if="${session.user_id != null and session.user_role == 'ORGANIZER'}"
+            <a sec:authorize="hasRole('ORGANIZER')"
                th:href="@{/event-form}"
                class="btn btn-primary">+ New event
             </a>
@@ -63,7 +63,7 @@
                     <h3><a th:href="@{/events/{id}(id=${event.id})}" th:text="${event.title}"></a></h3>
 
                     <div style="margin-bottom:.6rem;">
-                        <span class="badge badge-warning" th:if="${!event.published and session.user_role == 'ORGANIZER' and session.user_id == event.organizer.id}">Hidden</span>
+                        <span class="badge badge-warning" sec:authorize="hasRole('ORGANIZER')" th:if="${!event.published and event.organizer.id == #authentication.principal.id}">Hidden</span>
                         <span class="badge badge-danger" th:if="${availableSeatsByEvent[event.id] <= 0}">Sold out</span>
                     </div>
 
@@ -109,13 +109,13 @@
             </th:block>
 
             <th:block th:unless="${(search != null and !#strings.isEmpty(search)) or venueId != null}">
-                <th:block th:if="${session.user_role == 'ORGANIZER'}">
+                <th:block sec:authorize="hasRole('ORGANIZER')">
                     <h3>No events created yet</h3>
                     <p>Your events will appear here once you create one.</p>
                     <a th:href="@{/event-form}" class="btn btn-primary">Create an event</a>
                 </th:block>
 
-                <th:block th:if="${session.user_role == 'ATTENDEE'}">
+                <th:block sec:authorize="hasRole('ATTENDEE')">
                     <h3>Nothing on the calendar just yet</h3>
                     <p>Stay tuned! New events and exciting experiences are coming soon.</p>
                 </th:block>

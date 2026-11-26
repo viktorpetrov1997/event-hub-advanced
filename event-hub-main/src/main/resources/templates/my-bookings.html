@@ -57,7 +57,7 @@
                         <div class="actions">
                             <a th:href="@{/events/{id}(id=${booking.event.id})}" class="btn btn-secondary btn-sm">View</a>
 
-                            <form th:if="${booking.user.id == session.user_id and booking.status.name() == 'CONFIRMED'
+                            <form th:if="${booking.user.id == #authentication.principal.id and booking.status.name() == 'CONFIRMED'
                                     and booking.event.startTime.isAfter(T(java.time.LocalDateTime).now())}"
                                     th:action="@{/bookings/{id}/cancel(id=${booking.id})}"
                                     th:method="put" onsubmit="return confirm('Are you sure you want to cancel this booking?');">

@@ -7,10 +7,11 @@ import com.eventhub.booking.exception.BookingNotAllowedException;
 import com.eventhub.booking.exception.NotEnoughSeatsException;
 import com.eventhub.event.Event;
 import com.eventhub.event.EventService;
+import com.eventhub.security.AuthenticatedUser;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +34,9 @@ public class BookingController
     }
 
     @GetMapping("/my-bookings")
-    public ModelAndView getMyBookings(HttpSession httpSession)
+    public ModelAndView getMyBookings(@AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
-        UUID userId = (UUID) httpSession.getAttribute("user_id");
+        UUID userId = authenticatedUser.getId();
 
         List<Booking> bookings = bookingService.getBookingsForUser(userId);
 
@@ -48,10 +49,10 @@ public class BookingController
     public ModelAndView bookEvent(@PathVariable UUID id,
                                   @Valid @ModelAttribute("bookingForm") BookingFormRequest bookingForm,
                                   BindingResult bindingResult,
-                                  HttpSession httpSession,
+                                  @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
                                   RedirectAttributes redirectAttributes)
     {
-        UUID userId = (UUID) httpSession.getAttribute("user_id");
+        UUID userId = authenticatedUser.getId();
 
         if(bindingResult.hasErrors())
         {
@@ -94,10 +95,10 @@ public class BookingController
     }
 
     @PutMapping("/bookings/{id}/cancel")
-    public ModelAndView cancelBooking(@PathVariable UUID id, HttpSession httpSession,
+    public ModelAndView cancelBooking(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
                                       RedirectAttributes redirectAttributes)
     {
-        UUID userId = (UUID) httpSession.getAttribute("user_id");
+        UUID userId = authenticatedUser.getId();
 
         try
         {

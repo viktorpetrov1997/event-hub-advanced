@@ -1,4 +1,4 @@
-<nav th:fragment="navbar(activePage)" class="navbar">
+<nav th:fragment="navbar(activePage)" class="navbar" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <div class="container">
 
         <a class="brand" th:href="@{/}">
@@ -9,7 +9,7 @@
         <ul class="nav-links">
             <li><a th:href="@{/}" th:classappend="${activePage == 'index'} ? 'active'">Home</a></li>
 
-            <th:block th:if="${session.user_id == null}">
+            <th:block sec:authorize="!isAuthenticated()">
                 <li>
                     <a th:href="@{/login}" th:classappend="${activePage == 'login'} ? 'active'">Login</a>
                 </li>
@@ -18,7 +18,7 @@
                 </li>
             </th:block>
 
-            <th:block th:if="${session.user_role == 'ATTENDEE'}">
+            <th:block sec:authorize="hasRole('ATTENDEE')">
                 <li>
                     <a th:href="@{/events}" th:classappend="${activePage == 'events'} ? 'active'">Events</a>
                 </li>
@@ -27,7 +27,7 @@
                 </li>
             </th:block>
 
-            <th:block th:if="${session.user_role == 'ORGANIZER'}">
+            <th:block sec:authorize="hasRole('ORGANIZER')">
                 <li>
                     <a th:href="@{/events}" th:classappend="${activePage == 'events'} ? 'active'">Events</a>
                 </li>
@@ -42,10 +42,10 @@
                 </li>
             </th:block>
 
-            <li class="nav-user" th:if="${session.user_id != null}">
-                <span class="who" th:text="${session.username}">user</span>
+            <li class="nav-user" sec:authorize="isAuthenticated()">
+                <span class="who" sec:authentication="principal.displayName">user</span>
 
-                <span class="badge badge-primary" th:text="${session.user_role}"></span>
+                <span class="badge badge-primary" sec:authentication="principal.role"></span>
 
                 <form th:action="@{/logout}" method="post" style="display:inline;">
                     <button type="submit" class="btn btn-secondary btn-sm">Logout</button>

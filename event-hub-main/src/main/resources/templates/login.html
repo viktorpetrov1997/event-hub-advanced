@@ -23,18 +23,16 @@
 
                 <th:block th:replace="~{fragments/alerts :: alerts}"></th:block>
 
-                <form th:action="@{/login}" th:object="${userLoginRequest}" method="post" novalidate>
+                <form th:action="@{/login}" method="post">
 
-                    <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
+                    <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" th:field="*{email}" placeholder="Enter your email address">
-                        <div class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
                     </div>
 
-                    <div class="form-group" th:classappend="${#fields.hasErrors('password')} ? 'has-error'">
+                    <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" th:field="*{password}" placeholder="Your password">
-                        <div class="error-text" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                        <input type="password" id="password" name="password" placeholder="Your password" required>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block">Log in</button>

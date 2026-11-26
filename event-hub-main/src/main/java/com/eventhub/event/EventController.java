@@ -4,11 +4,12 @@ import com.eventhub.booking.BookingService;
 import com.eventhub.booking.dto.BookingFormRequest;
 import com.eventhub.event.dto.EventFormRequest;
 import com.eventhub.event.exception.*;
+import com.eventhub.security.AuthenticatedUser;
 import com.eventhub.venue.VenueService;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -39,10 +40,10 @@ public class EventController
     @GetMapping("/events")
     public ModelAndView getEventsPage(@RequestParam(required = false) String search,
                                       @RequestParam(required = false) UUID venueId,
-                                      HttpSession httpSession)
+                                      @AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
-        UUID currentUserId = (UUID) httpSession.getAttribute("user_id");
-        String currentUserRole = (String) httpSession.getAttribute("user_role");
+        UUID currentUserId = authenticatedUser.getId();
+        String currentUserRole = authenticatedUser.getRole().name();
 
         List<Event> events = eventService.getVisibleEventsForUser(currentUserId, currentUserRole, search, venueId);
 
@@ -86,7 +87,7 @@ public class EventController
 
     @PostMapping("/events")
     public ModelAndView createEvent(@Valid @ModelAttribute("eventForm") EventFormRequest eventForm,
-                                    BindingResult bindingResult, HttpSession httpSession, RedirectAttributes redirectAttributes)
+                                    BindingResult bindingResult, @AuthenticationPrincipal AuthenticatedUser authenticatedUser, RedirectAttributes redirectAttributes)
     {
         if(bindingResult.hasErrors())
         {
@@ -96,7 +97,7 @@ public class EventController
             return modelAndView;
         }
 
-        UUID organizerId = (UUID) httpSession.getAttribute("user_id");
+        UUID organizerId = authenticatedUser.getId();
 
         try
         {
@@ -122,9 +123,9 @@ public class EventController
     }
 
     @GetMapping("/events/{id}")
-    public ModelAndView getEventDetails(@PathVariable UUID id, HttpSession httpSession)
+    public ModelAndView getEventDetails(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
-        UUID currentUserId = (UUID) httpSession.getAttribute("user_id");
+        UUID currentUserId = authenticatedUser.getId();
 
         Event event = eventService.getEventById(id);
 
@@ -159,12 +160,12 @@ public class EventController
     @GetMapping("/events/{id}/edit")
     public ModelAndView getEventEditPage(@PathVariable UUID id,
                                          @RequestParam(defaultValue = "details") String redirectTo,
-                                         HttpSession httpSession,
+                                         @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
                                          RedirectAttributes redirectAttributes)
     {
         Event event = eventService.getEventById(id);
 
-        UUID currentUserId = (UUID) httpSession.getAttribute("user_id");
+        UUID currentUserId = authenticatedUser.getId();
 
         boolean isOwner = event.getOrganizer() != null
                 && event.getOrganizer().getId().equals(currentUserId);
@@ -204,11 +205,11 @@ public class EventController
     public ModelAndView updateEvent(@PathVariable UUID id,
                                     @Valid @ModelAttribute("eventForm") EventFormRequest eventForm,
                                     BindingResult bindingResult,
-                                    HttpSession httpSession,
+                                    @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
                                     @RequestParam(defaultValue = "details") String redirectTo,
                                     RedirectAttributes redirectAttributes)
     {
-        UUID currentUserId = (UUID) httpSession.getAttribute("user_id");
+        UUID currentUserId = authenticatedUser.getId();
 
         Event event = eventService.getEventById(id);
 
@@ -273,11 +274,11 @@ public class EventController
 
     @PutMapping("/events/{id}/visibility")
     public ModelAndView toggleEventVisibility(@PathVariable UUID id,
-                                              HttpSession httpSession,
+                                              @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
                                               RedirectAttributes redirectAttributes,
                                               @RequestParam(defaultValue = "details") String redirectTo)
     {
-        UUID currentUserId = (UUID) httpSession.getAttribute("user_id");
+        UUID currentUserId = authenticatedUser.getId();
 
         Event event = eventService.getEventById(id);
 
@@ -311,11 +312,11 @@ public class EventController
 
     @DeleteMapping("/events/{id}")
     public ModelAndView deleteEvent(@PathVariable UUID id,
-                                    HttpSession httpSession,
+                                    @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
                                     @RequestParam(defaultValue = "events") String redirectTo,
                                     RedirectAttributes redirectAttributes)
     {
-        UUID currentUserId = (UUID) httpSession.getAttribute("user_id");
+        UUID currentUserId = authenticatedUser.getId();
 
         Event event = eventService.getEventById(id);
 
@@ -352,9 +353,9 @@ public class EventController
     }
 
     @GetMapping("/dashboard")
-    public ModelAndView getDashboard(HttpSession httpSession)
+    public ModelAndView getDashboard(@AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
-        UUID organizerId = (UUID) httpSession.getAttribute("user_id");
+        UUID organizerId = authenticatedUser.getId();
 
         List<Event> events = eventService.getOrganizerEvents(organizerId);
 

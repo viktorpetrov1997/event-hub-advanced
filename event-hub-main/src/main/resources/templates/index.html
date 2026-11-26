@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,11 +18,11 @@
         <p>EventHub connects organizers with curious people. Browse upcoming events, reserve your seat in seconds, or publish your own event.</p>
 
         <div class="hero-actions">
-            <th:block th:if="${session.user_id == null}">
+            <th:block sec:authorize="!isAuthenticated()">
                 <a th:href="@{/register}" class="btn btn-light">Get started</a>
                 <a th:href="@{/login}" class="btn btn-ghost">I already have an account</a>
             </th:block>
-            <th:block th:if="${session.user_id != null}">
+            <th:block sec:authorize="isAuthenticated()">
                 <a th:href="@{/events}" class="btn btn-light">Browse events</a>
             </th:block>
         </div>

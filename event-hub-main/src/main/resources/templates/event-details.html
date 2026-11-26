@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,7 +54,7 @@
 
             <aside class="card booking-box">
 
-                <th:block th:if="${session.user_role == 'ATTENDEE'}">
+                <th:block sec:authorize="hasRole('ATTENDEE')">
 
                     <span class="price"
                           th:text="${event.price == 0 ? 'Free' : #numbers.formatDecimal(event.price, 1, 2) + ' €'}">
@@ -88,7 +88,7 @@
 
                 </th:block>
 
-                <th:block th:if="${session.user_role == 'ORGANIZER' and isOwner}">
+                <th:block sec:authorize="hasRole('ORGANIZER')" th:if="${isOwner}">
 
                     <div class="actions" style="flex-direction:column;">
                         <a th:if="${event.startTime.isAfter(T(java.time.LocalDateTime).now())}"
@@ -110,7 +110,7 @@
                     </div>
                 </th:block>
 
-                <p class="muted" th:if="${session.user_role == 'ORGANIZER' and !isOwner}">You can only manage your own events.</p>
+                <p class="muted" sec:authorize="hasRole('ORGANIZER')" th:if="${!isOwner}">You can only manage your own events.</p>
             </aside>
         </div>
     </div>
