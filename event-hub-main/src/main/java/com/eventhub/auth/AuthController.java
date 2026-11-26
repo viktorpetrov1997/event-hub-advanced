@@ -1,11 +1,13 @@
 package com.eventhub.auth;
 
+import com.eventhub.security.AuthenticatedUser;
 import com.eventhub.user.UserService;
 import com.eventhub.user.dto.UserRegisterRequest;
 import com.eventhub.user.exception.UserAlreadyExistsException;
 
 import jakarta.validation.Valid;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +26,13 @@ public class AuthController
     }
 
     @GetMapping("/register")
-    public ModelAndView getRegisterPage()
+    public ModelAndView getRegisterPage(@AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
+        if(authenticatedUser != null)
+        {
+            return new ModelAndView("redirect:/events");
+        }
+
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
 
         ModelAndView modelAndView = new ModelAndView("register");
@@ -36,8 +43,14 @@ public class AuthController
 
     @PostMapping("/register")
     public ModelAndView registerUser(@Valid UserRegisterRequest userRegisterRequest,
-                                     BindingResult bindingResult)
+                                     BindingResult bindingResult,
+                                     @AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
+        if(authenticatedUser != null)
+        {
+            return new ModelAndView("redirect:/events");
+        }
+
         if(bindingResult.hasErrors())
         {
             ModelAndView modelAndView = new ModelAndView("register");
@@ -61,8 +74,14 @@ public class AuthController
     }
 
     @GetMapping("/login")
-    public ModelAndView getLoginPage(@RequestParam(required = false) String error)
+    public ModelAndView getLoginPage(@RequestParam(required = false) String error,
+                                     @AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
+        if(authenticatedUser != null)
+        {
+            return new ModelAndView("redirect:/events");
+        }
+
         ModelAndView modelAndView = new ModelAndView("login");
 
         if(error != null)
