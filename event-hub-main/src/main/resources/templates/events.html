@@ -63,7 +63,7 @@
                     <h3><a th:href="@{/events/{id}(id=${event.id})}" th:text="${event.title}"></a></h3>
 
                     <div style="margin-bottom:.6rem;">
-                        <span class="badge badge-warning" sec:authorize="hasRole('ORGANIZER')" th:if="${!event.published and event.organizer.id == #authentication.principal.id}">Hidden</span>
+                        <span class="badge badge-warning" th:if="${!event.published and (event.organizer.id == #authentication.principal.id or #authorization.expression('hasRole(''ADMIN'')'))}">Hidden</span>
                         <span class="badge badge-danger" th:if="${availableSeatsByEvent[event.id] <= 0}">Sold out</span>
                     </div>
 
@@ -118,6 +118,12 @@
                 <th:block sec:authorize="hasRole('ATTENDEE')">
                     <h3>Nothing on the calendar just yet</h3>
                     <p>Stay tuned! New events and exciting experiences are coming soon.</p>
+                </th:block>
+
+                <th:block sec:authorize="hasRole('ADMIN')">
+                    <h3>No upcoming events on the platform</h3>
+                    <p>Events created by organizers, including hidden ones, will appear here.</p>
+                    <a th:href="@{/venues}" class="btn btn-secondary">Manage venues</a>
                 </th:block>
             </th:block>
         </div>

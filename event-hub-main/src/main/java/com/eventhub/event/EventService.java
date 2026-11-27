@@ -42,7 +42,9 @@ public class EventService
     {
         LocalDateTime now = LocalDateTime.now();
 
-        List<Event> events = eventRepository.findAllByPublishedTrueAndEndTimeAfterOrderByStartTimeAsc(now);
+        List<Event> events = "ADMIN".equals(currentUserRole)
+                ? eventRepository.findAllByEndTimeAfterOrderByStartTimeAsc(now)
+                : eventRepository.findAllByPublishedTrueAndEndTimeAfterOrderByStartTimeAsc(now);
 
         if("ORGANIZER".equals(currentUserRole) && currentUserId != null)
         {

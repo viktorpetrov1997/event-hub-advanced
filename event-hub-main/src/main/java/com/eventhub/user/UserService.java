@@ -43,6 +43,25 @@ public class UserService implements UserDetailsService
         return UserMapper.toUserDto(savedUser);
     }
 
+    public void createDefaultAdminIfMissing(String username, String email, String rawPassword)
+    {
+        if(userRepository.existsByRole(UserRole.ADMIN)
+                || userRepository.existsByUsername(username)
+                || userRepository.existsByEmail(email))
+        {
+            return;
+        }
+
+        User admin = User.builder()
+                .username(username)
+                .email(email)
+                .password(passwordEncoder.encode(rawPassword))
+                .role(UserRole.ADMIN)
+                .build();
+
+        userRepository.save(admin);
+    }
+
     public UserDto getById(UUID id)
     {
         User user = userRepository.findById(id)

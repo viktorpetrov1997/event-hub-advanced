@@ -63,8 +63,7 @@
                     </select>
 
                     <div class="hint" th:if="${#lists.isEmpty(venues)}">
-                        There are no venues yet.
-                        <a th:href="@{/venue-form}">Create a venue</a> first, then come back to create your event.
+                        There are no venues yet. An administrator needs to add a venue before you can create an event.
                     </div>
 
                     <div class="hint" th:unless="${#lists.isEmpty(venues)}">A venue can host only one event at a time.</div>

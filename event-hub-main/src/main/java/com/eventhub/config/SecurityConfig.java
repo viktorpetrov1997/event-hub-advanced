@@ -17,7 +17,8 @@ public class SecurityConfig
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/", "/login", "/register", "/error").permitAll()
-                        .requestMatchers("/dashboard", "/event-form", "/venue-form", "/venues", "/venues/**").hasRole("ORGANIZER")
+                        .requestMatchers("/admin/**", "/venue-form", "/venues", "/venues/**").hasRole("ADMIN")
+                        .requestMatchers("/dashboard", "/event-form").hasRole("ORGANIZER")
                         .requestMatchers("/events/*/edit").hasRole("ORGANIZER")
                         .requestMatchers(HttpMethod.POST, "/events").hasRole("ORGANIZER")
                         .requestMatchers(HttpMethod.PUT, "/events/*", "/events/*/visibility").hasRole("ORGANIZER")

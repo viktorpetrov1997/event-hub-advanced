@@ -5,6 +5,7 @@ import com.eventhub.booking.dto.BookingFormRequest;
 import com.eventhub.event.dto.EventFormRequest;
 import com.eventhub.event.exception.*;
 import com.eventhub.security.AuthenticatedUser;
+import com.eventhub.user.UserRole;
 import com.eventhub.venue.VenueService;
 
 import jakarta.validation.Valid;
@@ -134,7 +135,9 @@ public class EventController
 
         boolean alreadyBooked = bookingService.hasConfirmedBooking(currentUserId, id);
 
-        if(!event.isPublished() && !isOwner && !alreadyBooked)
+        boolean isAdmin = authenticatedUser.getRole() == UserRole.ADMIN;
+
+        if(!event.isPublished() && !isOwner && !alreadyBooked && !isAdmin)
         {
             return new ModelAndView("redirect:/events");
         }

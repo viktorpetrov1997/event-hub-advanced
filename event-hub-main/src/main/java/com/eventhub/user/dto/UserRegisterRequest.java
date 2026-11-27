@@ -38,4 +38,10 @@ public class UserRegisterRequest
 
     @NotNull(message = "Role is required")
     private UserRole role;
+
+    @AssertTrue(message = "Invalid role")
+    public boolean isRoleAllowed()
+    {
+        return role != UserRole.ADMIN;
+    }
 }
