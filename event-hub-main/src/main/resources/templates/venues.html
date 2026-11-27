@@ -17,7 +17,7 @@
         <div class="page-header">
             <div>
                 <h1>Venues</h1>
-                <p>Places where your events take place.</p>
+                <p>Places where events on the platform take place.</p>
             </div>
             <a th:href="@{/venue-form}" class="btn btn-primary">+ New venue</a>
         </div>
@@ -57,7 +57,7 @@
 
         <div class="empty-state" th:if="${#lists.isEmpty(venues)}">
             <h3>No venues yet</h3>
-            <p>Add a venue before creating your first event.</p>
+            <p>Add a venue so organizers can create events.</p>
             <a th:href="@{/venue-form}" class="btn btn-primary">Add venue</a>
         </div>
 
