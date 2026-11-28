@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Profile | EventHub</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar('profile')}"></div>
+
+<main>
+    <div class="container">
+
+        <div class="auth-wrapper">
+
+            <div class="card auth-card">
+
+                <h1>Edit profile</h1>
+                <p class="subtitle">After saving, you will need to log in again.</p>
+
+                <th:block th:replace="~{fragments/alerts :: alerts}"></th:block>
+
+                <form th:action="@{/profile}" th:object="${profileForm}" th:method="put" novalidate>
+
+                    <div class="form-group" th:classappend="${#fields.hasErrors('username')} ? 'has-error'">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" th:field="*{username}">
+                        <div class="error-text" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                    </div>
+
+                    <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" th:field="*{email}">
+                        <div class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Save changes</button>
+
+                </form>
+
+                <p class="auth-footer"><a th:href="@{/profile}">Cancel</a></p>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -77,6 +77,7 @@ public class AuthController
     public ModelAndView getLoginPage(@RequestParam(required = false) String error,
                                      @RequestParam(required = false) String expired,
                                      @RequestParam(required = false) String deleted,
+                                     @RequestParam(required = false) String profileUpdated,
                                      @AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
         if(authenticatedUser != null)
@@ -99,6 +100,11 @@ public class AuthController
         if(deleted != null)
         {
             modelAndView.addObject("errorMessage", "Your account no longer exists.");
+        }
+
+        if(profileUpdated != null)
+        {
+            modelAndView.addObject("successMessage", "Your profile was updated. Please log in again.");
         }
 
         return modelAndView;

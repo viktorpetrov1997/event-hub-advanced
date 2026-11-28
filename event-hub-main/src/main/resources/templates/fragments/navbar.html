@@ -51,6 +51,10 @@
                 </li>
             </th:block>
 
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/profile}" th:classappend="${activePage == 'profile'} ? 'active'">Profile</a>
+            </li>
+
             <li class="nav-user" sec:authorize="isAuthenticated()">
                 <span class="who" sec:authentication="principal.displayName">user</span>
 

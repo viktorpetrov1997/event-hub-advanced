@@ -4,6 +4,7 @@ import com.eventhub.booking.BookingService;
 import com.eventhub.event.EventService;
 import com.eventhub.security.AuthenticatedUser;
 import com.eventhub.user.dto.UserDto;
+import com.eventhub.user.dto.UserProfileEditRequest;
 import com.eventhub.user.dto.UserRegisterRequest;
 import com.eventhub.user.exception.RoleChangeNotAllowedException;
 import com.eventhub.user.exception.UserAlreadyExistsException;
@@ -118,6 +119,23 @@ public class UserService implements UserDetailsService
         User savedUser = userRepository.save(user);
 
         return UserMapper.toUserDto(savedUser);
+    }
+
+    public void updateProfile(UUID userId, UserProfileEditRequest request)
+    {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if(userRepository.existsByUsernameAndIdNot(request.getUsername(), userId)
+                || userRepository.existsByEmailAndIdNot(request.getEmail(), userId))
+        {
+            throw new UserAlreadyExistsException("This username or email is already taken!");
+        }
+
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+
+        userRepository.save(user);
     }
 
     @Override
