@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Users | EventHub</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/events.css">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar('admin-users')}"></div>
+
+<main>
+    <div class="container">
+
+        <div class="page-header">
+            <div>
+                <h1>Users</h1>
+                <p>Change user roles. The user will need to log in again to get the new role.</p>
+            </div>
+        </div>
+
+        <th:block th:replace="~{fragments/alerts :: alerts}"></th:block>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Change role</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td><strong th:text="${user.username}"></strong></td>
+                    <td th:text="${user.email}"></td>
+                    <td><span class="badge badge-primary" th:text="${user.role}"></span></td>
+                    <td>
+                        <span class="muted" th:if="${user.id == #authentication.principal.id}">This is you</span>
+                        <form th:unless="${user.id == #authentication.principal.id}"
+                              th:action="@{/admin/users/{id}/role(id=${user.id})}" th:method="put">
+                            <div class="actions">
+                                <select name="role" style="width:auto;">
+                                    <option th:each="role : ${roles}" th:if="${role != user.role}"
+                                            th:value="${role}" th:text="${role}">
+                                    </option>
+                                </select>
+                                <button type="submit" class="btn btn-outline btn-sm">Change</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

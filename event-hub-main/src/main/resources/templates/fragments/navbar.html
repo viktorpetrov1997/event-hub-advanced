@@ -46,6 +46,9 @@
                 <li>
                     <a th:href="@{/venues}" th:classappend="${activePage == 'venues'} ? 'active'">Venues</a>
                 </li>
+                <li>
+                    <a th:href="@{/admin/users}" th:classappend="${activePage == 'admin-users'} ? 'active'">Users</a>
+                </li>
             </th:block>
 
             <li class="nav-user" sec:authorize="isAuthenticated()">

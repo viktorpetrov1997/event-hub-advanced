@@ -128,6 +128,11 @@ public class BookingService
         return bookingRepository.existsByEventIdAndStatusNot(eventId, BookingStatus.CANCELLED);
     }
 
+    public boolean hasActiveBookingsForUser(UUID userId)
+    {
+        return bookingRepository.existsByUserIdAndStatusAndEventEndTimeAfter(userId, BookingStatus.CONFIRMED, LocalDateTime.now());
+    }
+
     @Transactional
     public void deleteAllBookingsForEvent(UUID eventId)
     {

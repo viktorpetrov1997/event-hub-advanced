@@ -195,4 +195,9 @@ public class EventService
     {
         return eventRepository.findAllByOrganizerIdOrderByStartTimeAsc(organizerId);
     }
+
+    public boolean hasUpcomingOrOngoingEvents(UUID organizerId)
+    {
+        return eventRepository.existsByOrganizerIdAndEndTimeAfter(organizerId, LocalDateTime.now());
+    }
 }

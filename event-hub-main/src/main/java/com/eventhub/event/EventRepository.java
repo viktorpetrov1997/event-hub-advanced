@@ -42,4 +42,6 @@ public interface EventRepository extends JpaRepository<Event, UUID>
     boolean existsByVenueIdAndEndTimeAfter(UUID venueId, LocalDateTime now);
 
     boolean existsByVenueId(UUID venueId);
+
+    boolean existsByOrganizerIdAndEndTimeAfter(UUID organizerId, LocalDateTime now);
 }

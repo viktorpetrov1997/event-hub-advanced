@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +24,8 @@ public interface BookingRepository extends JpaRepository<Booking, UUID>
     boolean existsByUserIdAndEventIdAndStatus(UUID userId, UUID eventId, BookingStatus status);
 
     boolean existsByEventIdAndStatusNot(UUID eventId, BookingStatus status);
+
+    boolean existsByUserIdAndStatusAndEventEndTimeAfter(UUID userId, BookingStatus status, LocalDateTime now);
 
     @Query("""
         SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b

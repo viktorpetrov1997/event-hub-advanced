@@ -75,6 +75,8 @@ public class AuthController
 
     @GetMapping("/login")
     public ModelAndView getLoginPage(@RequestParam(required = false) String error,
+                                     @RequestParam(required = false) String expired,
+                                     @RequestParam(required = false) String deleted,
                                      @AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
         if(authenticatedUser != null)
@@ -87,6 +89,16 @@ public class AuthController
         if(error != null)
         {
             modelAndView.addObject("errorMessage", "Invalid email or password!");
+        }
+
+        if(expired != null)
+        {
+            modelAndView.addObject("errorMessage", "Your account was changed by an administrator. Please log in again.");
+        }
+
+        if(deleted != null)
+        {
+            modelAndView.addObject("errorMessage", "Your account no longer exists.");
         }
 
         return modelAndView;
